@@ -10,20 +10,29 @@ class UserProfile(AbstractUser):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="posts"
+    )
     content = models.TextField(null=True)
     image = models.ImageField(upload_to='post_images/', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="comments"
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Like(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="likes"
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user', 'post']
