@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 
 class UserProfile(AbstractUser):
@@ -14,7 +15,13 @@ class Post(models.Model):
         UserProfile, on_delete=models.CASCADE, related_name="posts"
     )
     content = models.TextField(null=True)
-    image = models.ImageField(upload_to='post_images/', null=True)
+
+    def generate_filename(instance, filename):
+        extension = filename.split('.')[-1]
+        new_filename = f"{uuid.uuid4()}.{extension}"
+        return f'post_images/{new_filename}'
+
+    image = models.ImageField(upload_to=generate_filename, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
