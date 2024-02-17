@@ -19,5 +19,12 @@ urlpatterns = [
         views.get_posts_by_username,
         name="get_posts_by_username",
     ),
+    path(
+        'post/all/',
+        views.get_all_posts,
+        name="get_all_posts",
+    ),
     path('post/<int:id>/delete/', views.delete_post, name="delete_post"),
+    path('post/<int:id>/like/', views.like_post, name="like_post"),
+    path('post/<int:id>/comment/', views.comment_post, name="comment_post"),
 ]

@@ -32,6 +32,17 @@ def update_post(request, id):
 
 
 @csrf_exempt
+def get_all_posts(request):
+    if not request.method == 'GET':
+        return JsonResponse({"message": "Method not allowed"}, status=400)
+    try:
+        message, status = business.handle_get_all_posts()
+        return JsonResponse(message, status=status, safe=False)
+    except:
+        return JsonResponse({'message': 'Server Error'}, status=500)
+
+
+@csrf_exempt
 def get_post_by_id(request, id):
     if not request.method == 'GET':
         return JsonResponse({"message": "Method not allowed"}, status=400)
@@ -59,6 +70,30 @@ def delete_post(request, id):
         return JsonResponse({"message": "Method not allowed"}, status=400)
     try:
         message, status = business.handle_delete(id)
+        return JsonResponse(message, status=status)
+    except:
+        return JsonResponse({'message': 'Server Error'}, status=500)
+
+
+@csrf_exempt
+def like_post(request, id):
+    if not request.method == 'POST':
+        return JsonResponse({"message": "Method not allowed"}, status=400)
+    try:
+        data = json.loads(request.body)
+        message, status = business.handle_like_post(id, data)
+        return JsonResponse(message, status=status)
+    except:
+        return JsonResponse({'message': 'Server Error'}, status=500)
+
+
+@csrf_exempt
+def comment_post(request, id):
+    if not request.method == 'POST':
+        return JsonResponse({"message": "Method not allowed"}, status=400)
+    try:
+        data = json.loads(request.body)
+        message, status = business.handle_comment_post(id, data)
         return JsonResponse(message, status=status)
     except:
         return JsonResponse({'message': 'Server Error'}, status=500)

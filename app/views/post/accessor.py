@@ -1,4 +1,4 @@
-from app.models import Post, Comment
+from app.models import Post, Comment, Like
 
 
 def create_post(data):
@@ -19,6 +19,11 @@ def delete_post(id):
     user.delete()
 
 
+def get_posts():
+    posts = Post.objects.all()
+    return posts
+
+
 def get_post_by_id(id):
     post = Post.objects.filter(id=id).first()
     return post
@@ -32,3 +37,17 @@ def get_comments_of_post(post):
 def get_posts_by_user(user):
     posts = Post.objects.filter(user=user).all()
     return posts
+
+
+def like_post(post, user):
+    Like.objects.create(post=post, user=user)
+
+
+def get_like(post, user):
+    like = Like.objects.filter(post=post, user=user).first()
+    return like
+
+
+def comment_post(post, user, text):
+    comment = Comment.objects.create(post=post, user=user, text=text)
+    return comment

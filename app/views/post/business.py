@@ -34,6 +34,31 @@ def handle_delete(id):
     return ({'message': 'Post deleted'}, 204)
 
 
+def handle_like_post(id, data):
+    post = accessor.get_post_by_id(id)
+    if not post:
+        return ({'message': 'Post doesnot exists'}, 400)
+    user = user_accessor.get_user_by_id(data.get('user'))
+    if not user:
+        return ({'message': 'User doesnot exists'}, 400)
+    liked = accessor.get_like(post, user)
+    if liked:
+        return ({'message': 'Already liked'}, 400)
+    accessor.like_post(post, user)
+    return ({'message': f'{user.username} liked {post.content}'}, 201)
+
+
+def handle_comment_post(id, data):
+    post = accessor.get_post_by_id(id)
+    if not post:
+        return ({'message': 'Post doesnot exists'}, 400)
+    user = user_accessor.get_user_by_id(data.get('user'))
+    if not user:
+        return ({'message': 'User doesnot exists'}, 400)
+    comment = accessor.comment_post(post, user, data.get('text'))
+    return (model_to_dict(comment), 201)
+
+
 def validate_data(data, required_fields, optional_fields):
     validated_data = {}
     data_keys = data.keys()
@@ -95,6 +120,13 @@ def handle_get_post(id):
     if not post:
         return ({'message': 'Post not found'}, 404)
     return (get_post_data(post), 200)
+
+
+def handle_get_all_posts():
+    posts = accessor.get_posts()
+    if not posts:
+        return ({'message': 'Post not found'}, 404)
+    return ([get_post_data(post) for post in posts], 200)
 
 
 def handle_get_users_post(username):
