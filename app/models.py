@@ -19,7 +19,7 @@ class Post(models.Model):
     def generate_filename(instance, filename):
         extension = filename.split('.')[-1]
         new_filename = f"{uuid.uuid4()}.{extension}"
-        return f'post_images/{new_filename}'
+        return new_filename
 
     image = models.ImageField(upload_to=generate_filename, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
