@@ -1,5 +1,46 @@
 from django.contrib.auth.hashers import make_password
-from .accessor import get_user_by_username_or_email, get_user_by_id
+from django.forms.models import model_to_dict
+from .accessor import (
+    get_user_by_username_or_email,
+    get_user_by_id,
+    create_user,
+    update_user,
+    get_user_by_username,
+    delete_user,
+)
+
+
+def get_user_data(user):
+    user_data = model_to_dict(
+        user, fields=['id', 'username', 'email', 'first_name', 'last_name', 'bio']
+    )
+    return user_data
+
+
+def create_user_profile(data):
+    user = create_user(data)
+    return get_user_data(user)
+
+
+def update_user_profile(data, id):
+    user = update_user(data, id)
+    return get_user_data(user)
+
+
+def fetch_user(id=None, username=None):
+    if id:
+        user = get_user_by_id(id)
+    if username:
+        user = get_user_by_username(username)
+    return get_user_data(user)
+
+
+def try_delete(id):
+    user = get_user_by_id(id)
+    if not user:
+        return False
+    delete_user(user.id)
+    return True
 
 
 def validate_data(data, required_fields, optional_fields, is_create=False):
